@@ -8,24 +8,19 @@ class AuthService {
   Future<bool> register(String login, String password, String firstName) async {
     final String url = '$baseUrl/user/create';
 
-    // Map<String, dynamic> requestBody = {
-    //   'login': login,
-    //   'password': password,
-    //   'firstName': firstName,
-    // };
+    Map<String, dynamic> requestBody = {
+      'login': login,
+      'password': password,
+      'firstName': firstName,
+    };
 
     try {
       final response = await http.post(
         Uri.parse(url),
-        // headers: <String, String>{
-        //   'Content-Type': 'application/json; charset=UTF-8',
-        // },
-        //body: jsonEncode(requestBody),
-        body: {
-        'login': login,
-        'password': password,
-        'firstName': firstName,
-      }
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(requestBody),
       );
 
       if (response.statusCode == 201) {

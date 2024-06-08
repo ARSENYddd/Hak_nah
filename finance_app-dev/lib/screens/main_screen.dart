@@ -16,7 +16,7 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
   static final List<Widget> _widgetOptions = <Widget>[
-    ChatScreen(),
+   // ChatScreen(),
     HomeScreen(),
     NotificationsScreen(),
     ProfileScreen(),
@@ -35,10 +35,10 @@ class _MainScreenState extends State<MainScreen> {
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: 'Чат',
-          ),
+          // BottomNavigationBarItem(
+          //   icon: Icon(Icons.chat),
+          //   label: 'Чат',
+          // ),
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Главная',
