@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
           create: (_) => AuthService(),
         ),
         ProxyProvider<AuthService, UserService>(
-          update: (_, authService, __) => UserService(authService),
+          update: (context, authService, _) => UserService(authService),
         ),
       ],
       child: MaterialApp(
@@ -30,7 +30,8 @@ class MyApp extends StatelessWidget {
         initialRoute: '/',
         routes: {
           '/': (context) => MainScreen(),
-
+          '/login': (context) => LoginScreen(),
+          '/register': (context) => RegisterScreen(),
           // Add other routes here if needed
         },
       ),

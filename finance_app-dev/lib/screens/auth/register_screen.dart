@@ -10,8 +10,9 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final _emailController = TextEditingController();
+  final _loginController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _firstNameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -25,26 +26,36 @@ class _RegisterScreenState extends State<RegisterScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             TextField(
-              controller: _emailController,
-              decoration: InputDecoration(labelText: 'Email'),
+              controller: _loginController,
+              decoration: InputDecoration(labelText: 'Логин'),
             ),
             TextField(
               controller: _passwordController,
               decoration: InputDecoration(labelText: 'Пароль'),
               obscureText: true,
             ),
+            TextField(
+              controller: _firstNameController,
+              decoration: InputDecoration(labelText: 'Имя'),
+            ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-                String email = _emailController.text;
+                String login = _loginController.text;
                 String password = _passwordController.text;
+                String firstName = _firstNameController.text;
+
+                // Регистрируем пользователя
                 bool success = await Provider.of<AuthService>(context, listen: false)
-                    .register(email, password);
+                    .register(login, password, firstName);
+
+                // Если регистрация успешна, переходим на экран входа
                 if (success) {
-                  Navigator.pushReplacementNamed(context, '/profile');
+                  Navigator.pushReplacementNamed(context, '/login');
                 } else {
+                  // Если регистрация не удалась, показываем сообщение об ошибке
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Ошибка регистрации')),
+                    SnackBar(content: Text('Ошибка регистрации. Попробуйте еще раз.')),
                   );
                 }
               },

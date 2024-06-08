@@ -1,29 +1,22 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'auth_service.dart';
 
 class UserService {
-  final String baseUrl = 'https://yourapi.com/api';  // Замените на ваш URL API
-  final AuthService authService;
+  final AuthService _authService;
 
-  UserService(this.authService);
+  UserService(this._authService);
 
-  Future<Map<String, dynamic>?> getUserProfile() async {
-    final token = await authService.getToken();
-    final response = await http.get(
-      Uri.parse('$baseUrl/profile'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $token',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      return null;
-    }
+  Future<bool> registerUser(String email, String password, String firstName) async {
+    // Регистрируем нового пользователя
+    return _authService.register(email, password, firstName);
   }
 
-// Добавьте другие методы для работы с пользователем, если необходимо
+  Future<bool> authenticateUser(String email, String password) {
+    // Аутентификация пользователя
+    return _authService.login(email, password);
+  }
+
+  Future<String?> getToken() {
+    // Получаем токен из AuthService
+    return _authService.getToken();
+  }
 }
