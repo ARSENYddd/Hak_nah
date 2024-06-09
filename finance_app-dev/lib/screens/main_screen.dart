@@ -1,5 +1,6 @@
+// lib/screens/main_screen.dart
 import 'package:flutter/material.dart';
-import 'package:finance_app/screens/chat/chat_screen.dart';
+import 'package:finance_app/screens/chat/chat_list_screen.dart';
 import 'package:finance_app/screens/home/home_screen.dart';
 import 'package:finance_app/screens/notifications/notifications_screen.dart';
 import 'package:finance_app/screens/profile/profile_screen.dart';
@@ -16,7 +17,7 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
   static final List<Widget> _widgetOptions = <Widget>[
-    ChatScreen(),
+    ChatListScreen(),
     HomeScreen(),
     NotificationsScreen(),
     ProfileScreen(),

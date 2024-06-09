@@ -2,82 +2,48 @@ import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/io.dart';
 
-class ChatScreen extends StatefulWidget {
-  @override
-  _ChatScreenState createState() => _ChatScreenState();
-}
 
-class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
 
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 3, vsync: this); // Длина установлена на 3, чтобы соответствовать количеству чатов
-  }
+
+class ChatListScreen extends StatelessWidget {
+  final List<String> chatRooms = ['Chat 1', 'Chat 2', 'Chat 3'];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Чаты'),
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: [
-            Tab(text: 'Chat 1'),
-            Tab(text: 'Chat 2'),
-            Tab(text: 'Chat 3'),
-          ],
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              // Действие при нажатии на кнопку "Вход"
-            },
-            icon: Icon(Icons.login),
-          ),
-          IconButton(
-            onPressed: () {
-              // Действие при нажатии на кнопку "Регистрация"
-            },
-            icon: Icon(Icons.app_registration),
-          ),
-          IconButton(
-            onPressed: () {
-              // Действие при нажатии на кнопку "Профиль"
-            },
-            icon: Icon(Icons.person),
-          ),
-        ],
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          ChatRoom(roomName: 'Chat 1'), // Добавляем ChatRoom для каждого чата
-          ChatRoom(roomName: 'Chat 2'),
-          ChatRoom(roomName: 'Chat 3'),
-        ],
+      body: ListView.builder(
+        itemCount: chatRooms.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text(chatRooms[index]),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChatRoomScreen(roomName: chatRooms[index]),
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
 }
 
-class ChatRoom extends StatefulWidget {
+class ChatRoomScreen extends StatefulWidget {
   final String roomName;
 
-  const ChatRoom({Key? key, required this.roomName}) : super(key: key);
+  const ChatRoomScreen({Key? key, required this.roomName}) : super(key: key);
 
   @override
-  _ChatRoomState createState() => _ChatRoomState();
+  _ChatRoomScreenState createState() => _ChatRoomScreenState();
 }
 
-class _ChatRoomState extends State<ChatRoom> {
+class _ChatRoomScreenState extends State<ChatRoomScreen> {
   final TextEditingController _controller = TextEditingController();
   late final WebSocketChannel _channel;
 
@@ -110,6 +76,9 @@ class _ChatRoomState extends State<ChatRoom> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.roomName),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
