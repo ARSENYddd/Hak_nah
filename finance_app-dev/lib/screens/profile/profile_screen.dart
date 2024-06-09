@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:finance_app/widgets/drop_list.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -86,6 +87,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          AppMenu(), // Добавление AppMenu в AppBar
+        ],
         title: Text('Профиль пользователя'),
       ),
       body: FutureBuilder<Map<String, dynamic>>(
