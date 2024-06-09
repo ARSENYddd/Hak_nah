@@ -1,4 +1,3 @@
-// lib/screens/chat/chat_room_screen.dart
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/io.dart';
@@ -33,10 +32,14 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     super.initState();
     // Подключение к вашему серверу WebSocket
     _channel = IOWebSocketChannel.connect('ws://213.226.126.164:8000/fitness_messages/ws/${widget.userId}');
+   // _channel = IOWebSocketChannel.connect('ws://213.226.126.164:8000/fitness_messages/ws/1');
     _channel.stream.listen((message) {
-      setState(() {
-        _messages.add(message);
-      });
+      final data = jsonDecode(message);
+      if (data['sender_id'] == widget.secondUserId || data['receiver_id'] == widget.secondUserId) {
+        setState(() {
+          _messages.add("${data['sender_id']}: ${data['message']}");
+        });
+      }
     });
 
     // Получение истории сообщений
@@ -45,12 +48,13 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
   Future<void> _fetchChatHistory() async {
     final url = 'http://213.226.126.164:8000/chats/history?first_user_id=${widget.firstUserId}&second_user_id=${widget.secondUserId}';
+    //final url = 'http://213.226.126.164:8000/chats/history?first_user_id=1&second_user_id=2';
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
       List<dynamic> messageData = jsonDecode(response.body);
       setState(() {
-        _messages.addAll(messageData.map((msg) => msg['message'].toString()).toList());
+        _messages.addAll(messageData.map((msg) => "${msg['sender_id']}: ${msg['message_text']}").toList());
       });
     } else {
       // Обработка ошибки
@@ -60,13 +64,23 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
   void _sendMessage() {
     if (_controller.text.isNotEmpty) {
-      _channel.sink.add(_controller.text); // Отправка сообщения на сервер
+      final message = {
+        "sender_id": widget.userId,
+        "receiver_id": widget.secondUserId,
+        "message_text": _controller.text
+      };
+      _channel.sink.add(jsonEncode(message));
       _controller.clear();
     }
   }
 
   void _sendCustomMessage(String message) {
-    _channel.sink.add(message);
+    final customMessage = {
+      "sender_id": widget.userId,
+      "receiver_id": widget.secondUserId,
+      "message_text": message
+    };
+    _channel.sink.add(jsonEncode(customMessage));
   }
 
   void _showAttachmentOptions() {

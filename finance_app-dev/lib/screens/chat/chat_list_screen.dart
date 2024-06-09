@@ -37,9 +37,9 @@ class ChatListScreen extends StatelessWidget {
                 MaterialPageRoute(
                   builder: (context) => ChatRoomScreen(
                     roomName: 'Chat 2',
-                    userId: 1, // ваш userId для WebSocket
-                    firstUserId: 1,
-                    secondUserId: 3,
+                    userId: 2, // ваш userId для WebSocket
+                    firstUserId: 2,
+                    secondUserId: 1,
                   ),
                 ),
               );

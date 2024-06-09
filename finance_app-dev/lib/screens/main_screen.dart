@@ -1,4 +1,3 @@
-// lib/screens/main_screen.dart
 import 'package:flutter/material.dart';
 import 'package:finance_app/screens/chat/chat_list_screen.dart';
 import 'package:finance_app/screens/home/home_screen.dart';
