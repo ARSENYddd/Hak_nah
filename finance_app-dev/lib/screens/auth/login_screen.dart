@@ -10,7 +10,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _emailController = TextEditingController();
+  final _loginController = TextEditingController();
   final _passwordController = TextEditingController();
 
   @override
@@ -25,7 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             TextField(
-              controller: _emailController,
+              controller: _loginController,
               decoration: InputDecoration(labelText: 'Email'),
             ),
             TextField(
@@ -36,10 +36,10 @@ class _LoginScreenState extends State<LoginScreen> {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-                String email = _emailController.text;
+                String login = _loginController.text;
                 String password = _passwordController.text;
                 bool success = await Provider.of<AuthService>(context, listen: false)
-                    .login(email, password);
+                    .login(login, password);
                 if (success) {
                   Navigator.pushReplacementNamed(context, '/profile');
                 } else {

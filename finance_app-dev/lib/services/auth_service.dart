@@ -37,7 +37,7 @@ class AuthService {
   }
 
   Future<bool> login(String email, String password) async {
-    final Uri url = Uri.parse('$baseUrl/login');
+    final Uri url = Uri.parse('$baseUrl/token');
 
     try {
       final response = await http.post(
@@ -46,17 +46,24 @@ class AuthService {
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, String>{
-          'email': email,
+          'login': email,
           'password': password,
         }),
       );
 
       if (response.statusCode == 200) {
-        // Парсим токен из ответа API
-        String token = jsonDecode(response.body)['token'];
-        // Сохраняем токен в SharedPreferences
+        // Парсим токены из ответа API
+        final responseBody = jsonDecode(response.body);
+        String accessToken = responseBody['accessToken'];
+        String refreshToken = responseBody['refreshToken'];
+
+        // Сохраняем токены в SharedPreferences
         final prefs = await SharedPreferences.getInstance();
-        prefs.setString('token', token);
+        await prefs.setString('accessToken', accessToken);
+        await prefs.setString('refreshToken', refreshToken);
+
+        print('Access Token: $accessToken');
+        print('Refresh Token: $refreshToken');
         return true;
       } else {
         return false;
@@ -75,5 +82,43 @@ class AuthService {
   Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('token');
+  }
+  Future<bool> refreshTokens() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? refreshToken = prefs.getString('refreshToken');
+
+    if (refreshToken == null) {
+      return false;
+    }
+
+    final Uri refreshUrl = Uri.parse('http://95.174.93.12:8080/fitness/refresh');
+
+    try {
+      final response = await http.post(
+        refreshUrl,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'refreshToken': refreshToken,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final responseBody = jsonDecode(response.body);
+        String newAccessToken = responseBody['accessToken'];
+        String newRefreshToken = responseBody['refreshToken'];
+
+        await prefs.setString('accessToken', newAccessToken);
+        await prefs.setString('refreshToken', newRefreshToken);
+
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print('Error refreshing tokens: $e');
+      return false;
+    }
   }
 }
