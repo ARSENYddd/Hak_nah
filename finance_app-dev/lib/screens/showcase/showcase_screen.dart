@@ -1,11 +1,10 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'coaches_screen.dart'; // Добавьте импорт для экрана тренеров
 
 class ShowcaseScreen extends StatelessWidget {
   const ShowcaseScreen({Key? key}) : super(key: key);
-
-  // TODO: Сделать ссылки на новые окна
 
   @override
   Widget build(BuildContext context) {
@@ -17,17 +16,17 @@ class ShowcaseScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-             Text(
+            Text(
               'Выберите нужный раздел:',
               style: TextStyle(fontSize: 24),
             ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => TasksScreen()),
-                // );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CoachesScreen()),
+                );
               },
               child: Container(
                 height: 50,
@@ -87,18 +86,4 @@ class ShowcaseScreen extends StatelessWidget {
       ),
     );
   }
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     appBar: AppBar(
-  //       title: Text('Витрина'),
-  //     ),
-  //     body: Center(
-  //       child: Text(
-  //         'Здесь будет витрина.',
-  //         style: TextStyle(fontSize: 24),
-  //       ),
-  //     ),
-  //   );
-  // }
 }
