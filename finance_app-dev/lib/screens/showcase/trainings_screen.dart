@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class RecipesScreen extends StatefulWidget {
+class TrainingsScreen extends StatefulWidget {
   @override
-  _RecipesScreenState createState() => _RecipesScreenState();
+  _TrainingsScreenState createState() => _TrainingsScreenState();
 }
 
-class _RecipesScreenState extends State<RecipesScreen> {
+class _TrainingsScreenState extends State<TrainingsScreen> {
   
   @override
   void initState() {
@@ -20,7 +20,7 @@ class _RecipesScreenState extends State<RecipesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Рецепты'),
+        title: Text('Тренировки'),
       ),
       body: Center(
         child: Text('Привет мир')
