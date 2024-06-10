@@ -44,20 +44,65 @@ class ExercisesListPage extends StatefulWidget {
 
 class _ExercisesListPageState extends State<ExercisesListPage> {
   late Future<List<Exercise>> futureExercises;
+  final ScrollController _scrollController = ScrollController();
+
+  bool _isLoading = false;
+  int _pageNumber = 1;
+  int _pageSize = 20;
+  List<Exercise> allExercises = [];
 
   @override
   void initState() {
     super.initState();
-    futureExercises = fetchExercises();
+    futureExercises = fetchExercises(_pageNumber, _pageSize);
+    futureExercises.then((initialExercises) {
+      setState(() {
+        allExercises = initialExercises;
+      });
+    });
+    _scrollController.addListener(_scrollListener);
   }
 
-  Future<List<Exercise>> fetchExercises() async {
-    final response = await http.get(Uri.parse('https://kualsoft.ru/fitness/exercise/page?page=25&size=10'));
+  @override
+  void dispose() {
+    _scrollController.removeListener(_scrollListener);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollListener() {
+    if (_scrollController.position.extentAfter < 500 && !_isLoading) {
+      _fetchAndAppendExercises();
+    }
+  }
+
+  void _fetchAndAppendExercises() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final List<Exercise> newExercises = await fetchExercises(_pageNumber, _pageSize);
+      setState(() {
+        allExercises.addAll(newExercises);
+        _pageNumber++;
+      });
+    } catch (e) {
+      print('Error loading next page: $e');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<List<Exercise>> fetchExercises(int pageNumber, int pageSize) async {
+    final response = await http.get(Uri.parse('https://kualsoft.ru/fitness/exercise/page?page=$pageNumber&size=$pageSize'));
 
     if (response.statusCode == 200) {
-      Map<String, dynamic> jsonResponse = json.decode(utf8.decode(response.bodyBytes)); // Декодирование UTF-8
+      Map<String, dynamic> jsonResponse = json.decode(utf8.decode(response.bodyBytes));
       List<dynamic> exercisesJson = jsonResponse['exercises'] ?? [];
-      return exercisesJson.map((exercise) => Exercise.fromJson(exercise)).toList();
+      return exercisesJson.map((exercise) => Exercise.fromJson(exercise)).cast<Exercise>().toList();
     } else {
       throw Exception('Failed to load exercises');
     }
@@ -71,18 +116,11 @@ class _ExercisesListPageState extends State<ExercisesListPage> {
           title: Text(exercise.name),
           content: SingleChildScrollView(
             child: Column(
-              //mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildDetailItem('Дополнительная мышца ', exercise.additionalMuscle['name']),
                 _buildDetailItem('Тип', exercise.type['name']),
                 _buildDetailItem('Оборудование', exercise.equipment['name']),
-                // _buildDetailItem('Сложность', exercise.difficulty['name']),
-                // SizedBox(height: 16),
-                // Text('Фотографии:', style: TextStyle(fontWeight: FontWeight.bold)),
-                // SizedBox(height: 8),
-                // if (exercise.photos.isNotEmpty) // Проверяем, есть ли фотографии
-                //   _buildPhotos(exercise.photos),
               ],
             ),
           ),
@@ -99,7 +137,7 @@ class _ExercisesListPageState extends State<ExercisesListPage> {
     );
   }
 
-  Widget _buildDetailItem(String label, String value) {
+  Widget _buildDetailItem(String label, String? value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Column(
@@ -110,35 +148,12 @@ class _ExercisesListPageState extends State<ExercisesListPage> {
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 4), // Пространство между меткой и значением
-          Text(value),
+          Text(value ?? ''),
         ],
       ),
     );
   }
 
-  // Widget _buildPhotos(List<String> photoUrls) {
-  //   return SizedBox(
-  //     height: 10, // Установите желаемую высоту списка изображений
-  //     child: ListView.builder(
-  //       scrollDirection: Axis.horizontal,
-  //       itemCount: photoUrls.length,
-  //       itemBuilder: (context, index) {
-  //         return Padding(
-  //           padding: const EdgeInsets.only(right: 8.0),
-  //           child: Container(
-  //             width: 10, // Установите желаемую ширину изображения
-  //             height: 10, // Установите желаемую высоту изображения
-  //             child: Image.network(
-  //               photoUrls[index],
-  //               fit: BoxFit.scaleDown,
-  //                 width: 150
-  //             ),
-  //           ),
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -156,32 +171,44 @@ class _ExercisesListPageState extends State<ExercisesListPage> {
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
               return Text('Нет доступных упражнений');
             } else {
-              return ListView.builder(
-                itemCount: snapshot.data!.length,
-                itemBuilder: (context, index) {
-                  final exercise = snapshot.data![index];
+              return Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      key: PageStorageKey('listView'),
+                      controller: _scrollController,
+                      itemCount: allExercises.length,
+                      itemBuilder: (context, index) {
+                        final exercise = allExercises[index];
 
-                  // Создаем RichText для стилизации текста
-                  return ListTile(
-                    title: RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: exercise.name, // Название упражнения
-                            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                        return ListTile(
+                          title: RichText(
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: exercise.name,
+                                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                                ),
+                                TextSpan(
+                                  text: '\n ${exercise.muscle['name']}',
+                                  style: TextStyle(color: Colors.grey, fontSize: 12),
+                                ),
+                              ],
+                            ),
                           ),
-                          TextSpan(
-                            text: '\n ${exercise.muscle['name']}', // Название мышцы
-                            style: TextStyle(color: Colors.grey, fontSize: 12),
-                          ),
-                        ],
-                      ),
+                          onTap: () {
+                            _showExerciseDetails(context, exercise);
+                          },
+                        );
+                      },
                     ),
-                    onTap: () {
-                      _showExerciseDetails(context, exercise);
-                    },
-                  );
-                },
+                  ),
+                  if (_isLoading) // Показываем индикатор загрузки, если данные загружаются
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CircularProgressIndicator(),
+                    ),
+                ],
               );
             }
           },
@@ -189,8 +216,6 @@ class _ExercisesListPageState extends State<ExercisesListPage> {
       ),
     );
   }
-
-
 }
 
 void main() {
