@@ -1,14 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-<<<<<<< Updated upstream
-
-class ShowcaseScreen extends StatelessWidget {
-  const ShowcaseScreen({Key? key}) : super(key: key);
-
-  // TODO: Сделать ссылки на новые окна
-
-=======
 import 'coaches_screen.dart';
 import 'trainings_screen.dart';
 import 'exercises_screen.dart';
@@ -16,7 +8,6 @@ import 'recipes_screen.dart';
 
 
 class ShowcaseScreen extends StatelessWidget {
->>>>>>> Stashed changes
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,29 +20,6 @@ class ShowcaseScreen extends StatelessWidget {
           ),
         ],
       ),
-<<<<<<< Updated upstream
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-             Text(
-              'Выберите нужный раздел:',
-              style: TextStyle(fontSize: 24),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => TasksScreen()),
-                // );
-              },
-              child: Container(
-                height: 50,
-                width: 150, // Ширина кнопки
-                alignment: Alignment.center, // Выравнивание текста по центру
-                child: Text('Тренера', style: TextStyle(fontSize: 18)),
-=======
       body: ListView(
         children: [
           Section(
@@ -61,7 +29,6 @@ class ShowcaseScreen extends StatelessWidget {
               Trainer(
                 name: 'Игорь Каравалов',
                 description: 'Тренер-нутрициолог',
->>>>>>> Stashed changes
               ),
               Trainer(
                 name: 'Елена Заморечная',
@@ -71,26 +38,9 @@ class ShowcaseScreen extends StatelessWidget {
                 name: 'Елена Заморечная',
                 description: 'Тренер',
               ),
-<<<<<<< Updated upstream
-            ),
-            SizedBox(height: 15),
-            ElevatedButton(
-              onPressed: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => TasksScreen()),
-                // );
-              },
-              child: Container(
-                height: 50,
-                width: 150, // Ширина кнопки
-                alignment: Alignment.center, // Выравнивание текста по центру
-                child: Text('Упражнения', style: TextStyle(fontSize: 18)),
-=======
               Trainer(
                 name: 'Елена Заморечная',
                 description: 'Тренер',
->>>>>>> Stashed changes
               ),
             ],
           ),
@@ -186,20 +136,6 @@ class ShowcaseScreen extends StatelessWidget {
       ),
     );
   }
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     appBar: AppBar(
-  //       title: Text('Витрина'),
-  //     ),
-  //     body: Center(
-  //       child: Text(
-  //         'Здесь будет витрина.',
-  //         style: TextStyle(fontSize: 24),
-  //       ),
-  //     ),
-  //   );
-  // }
 }
 
 class Section extends StatelessWidget {
