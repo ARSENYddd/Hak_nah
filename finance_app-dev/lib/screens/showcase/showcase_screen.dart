@@ -1,7 +1,8 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'coaches_screen.dart'; // Добавьте импорт для экрана тренеров
+import 'coaches_screen.dart';
+import 'tasks_screen.dart';// Добавьте импорт для экрана тренеров
 
 class ShowcaseScreen extends StatelessWidget {
   const ShowcaseScreen({Key? key}) : super(key: key);
@@ -68,10 +69,10 @@ class ShowcaseScreen extends StatelessWidget {
             SizedBox(height: 15),
             ElevatedButton(
               onPressed: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => TasksScreen()),
-                // );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ExercisesListPage()),
+                );
               },
               child: Container(
                 height: 50,

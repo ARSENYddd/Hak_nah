@@ -22,7 +22,7 @@ class _CoachesScreenState extends State<CoachesScreen> {
     final response = await http.get(Uri.parse('https://kualsoft.ru/fitness/public/coach/all'));
 
     if (response.statusCode == 200) {
-      List jsonResponse = json.decode(response.body);
+      List jsonResponse = json.decode(utf8.decode(response.bodyBytes)); // Декодирование UTF-8
       return jsonResponse.map((coach) => Coach.fromJson(coach)).toList();
     } else {
       throw Exception('Failed to load coaches');
