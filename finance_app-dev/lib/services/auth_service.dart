@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
-  final String baseUrl = 'https://kualsoft.ru/fitness/'; // Замените на ваш URL API
+  final String baseUrl = 'https://kualsoft.ru/fitness'; // Замените на ваш URL API
 
   Future<bool> register(String login, String password, String firstName) async {
     final String url = '$baseUrl/user/create';

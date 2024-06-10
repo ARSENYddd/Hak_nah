@@ -25,19 +25,19 @@ class ChatRoomScreen extends StatefulWidget {
 class _ChatRoomScreenState extends State<ChatRoomScreen> {
   final TextEditingController _controller = TextEditingController();
   late final WebSocketChannel _channel;
-  final List<String> _messages = [];
+  final List<Map<String, dynamic>> _messages = [];
 
   @override
   void initState() {
     super.initState();
     // Подключение к вашему серверу WebSocket
     _channel = IOWebSocketChannel.connect('ws://213.226.126.164:8000/fitness_messages/ws/${widget.userId}');
-   // _channel = IOWebSocketChannel.connect('ws://213.226.126.164:8000/fitness_messages/ws/1');
+    // _channel = IOWebSocketChannel.connect('ws://213.226.126.164:8000/fitness_messages/ws/1');
     _channel.stream.listen((message) {
       final data = jsonDecode(message);
       if (data['sender_id'] == widget.secondUserId || data['receiver_id'] == widget.secondUserId) {
         setState(() {
-          _messages.add("${data['sender_id']}: ${data['message']}");
+          _messages.add(data);
         });
       }
     });
@@ -48,13 +48,13 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
   Future<void> _fetchChatHistory() async {
     final url = 'http://213.226.126.164:8000/chats/history?first_user_id=${widget.firstUserId}&second_user_id=${widget.secondUserId}';
-    //final url = 'http://213.226.126.164:8000/chats/history?first_user_id=1&second_user_id=2';
+    // final url = 'http://213.226.126.164:8000/chats/history?first_user_id=1&second_user_id=2';
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
       List<dynamic> messageData = jsonDecode(response.body);
       setState(() {
-        _messages.addAll(messageData.map((msg) => "${msg['sender_id']}: ${msg['message_text']}").toList());
+        _messages.addAll(messageData.map((msg) => msg as Map<String, dynamic>).toList());
       });
     } else {
       // Обработка ошибки
@@ -70,6 +70,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         "message_text": _controller.text
       };
       _channel.sink.add(jsonEncode(message));
+      setState(() {
+        _messages.add(message);
+      });
       _controller.clear();
     }
   }
@@ -81,6 +84,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       "message_text": message
     };
     _channel.sink.add(jsonEncode(customMessage));
+    setState(() {
+      _messages.add(customMessage);
+    });
   }
 
   void _showAttachmentOptions() {
@@ -137,8 +143,26 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
               child: ListView.builder(
                 itemCount: _messages.length,
                 itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(_messages[index]),
+                  final message = _messages[index];
+                  final isCurrentUser = message['sender_id'] == widget.userId;
+
+                  return Align(
+                    alignment: isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
+                    child: Container(
+                      margin: EdgeInsets.symmetric(vertical: 4.0),
+                      padding: EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        color: isCurrentUser ? Colors.purple[100] : Colors.white,
+                        borderRadius: BorderRadius.circular(12.0),
+                        border: Border.all(color: isCurrentUser ? Colors.purple : Colors.grey),
+                      ),
+                      child: Text(
+                        "${message['sender_id']}: ${message['message_text']}",
+                        style: TextStyle(
+                          color: isCurrentUser ? Colors.black : Colors.black,
+                        ),
+                      ),
+                    ),
                   );
                 },
               ),
