@@ -30,7 +30,7 @@ class UserService {
       throw Exception('No access token found');
     }
 
-    final Uri url = Uri.parse('http://95.174.93.12:8080/fitness/user');
+    final Uri url = Uri.parse('https://kualsoft.ru/fitness/user');
 
     try {
       final response = await http.get(

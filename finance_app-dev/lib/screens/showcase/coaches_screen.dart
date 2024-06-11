@@ -128,7 +128,6 @@ class Club {
 
   Club({required this.id, required this.name, required this.address, required this.city, required this.brand});
 
-
   factory Club.fromJson(Map<String, dynamic> json) {
     return Club(
       id: json['id'],

@@ -16,7 +16,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final prefs = await SharedPreferences.getInstance();
     String accessToken = prefs.getString('accessToken') ?? '';
 
-    final Uri url = Uri.parse('http://95.174.93.12:8080/fitness/user');
+    final Uri url = Uri.parse('https://kualsoft.ru/fitness/user');
 
     try {
       final response = await http.get(
@@ -52,7 +52,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final prefs = await SharedPreferences.getInstance();
     String refreshToken = prefs.getString('refreshToken') ?? '';
 
-    final Uri refreshUrl = Uri.parse('http://95.174.93.12:8080/fitness/refresh');
+    final Uri refreshUrl =
+        Uri.parse('http://95.174.93.12:8080/fitness/refresh');
 
     try {
       final response = await http.post(
@@ -139,13 +140,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.pushReplacementNamed( context, '/login');
+                      Navigator.pushReplacementNamed(context, '/login');
                     },
                     child: Text('Вход'),
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.pushReplacementNamed( context, '/register');
+                      Navigator.pushReplacementNamed(context, '/register');
                     },
                     child: Text('Регистрация'),
                   ),
