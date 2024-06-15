@@ -76,13 +76,15 @@ class AuthService {
 
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('token');
+    await prefs.remove('accessToken');
+    await prefs.remove('refreshToken');
   }
 
   Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('token');
   }
+
   Future<bool> refreshTokens() async {
     final prefs = await SharedPreferences.getInstance();
     String? refreshToken = prefs.getString('refreshToken');
